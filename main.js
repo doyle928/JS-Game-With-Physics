@@ -18,7 +18,6 @@ const Engine = Matter.Engine,
 // create an engine
 const engine = Engine.create();
 
-
 let windowX = window.innerWidth;
 let windowY = window.innerHeight;
 
@@ -34,15 +33,20 @@ const render = Render.create({
     }
 });
 
+var defaultCategory = 0x0001,
+    redCategory = 0x0002,
+    greenCategory = 0x0004,
+    blueCategory = 0x0008;
+
 let boxA = Bodies.rectangle(700, 500, 300, 300, {
     label: "level1",
     isStatic: true,
-    friction: .0001,
+    friction: 0.0001,
     render: {
         fillStyle: "darkblue",
         strokeStyle: "black",
         lineWidth: 1
-    },
+    }
 });
 let ground = Bodies.rectangle(windowX / 2, windowY + 20, windowX, 40, {
     isStatic: true,
@@ -73,137 +77,108 @@ let ceiling = Bodies.rectangle(windowX / 2, -20, windowX, 40, {
 });
 
 
-let group = Body.nextGroup(true),
-    length = 200,
-    width = 50;
+let pan = Bodies.fromVertices(100, 460, Vertices.fromPath('100 0 85 35 15 35 0 0'), {
+    render: {},
+    collisionFilter: {
+        mask: redCategory
+    }
+}, true);
 
-let pan = Composites.stack(150, 460, 1, 1, 0, 0, function (x, y) {
-    return Bodies.rectangle(x, y, length, width, {
-        collisionFilter: {
-            group: group
-        },
-        chamfer: 5,
-        density: 1,
-        friction: 1,
-        frictionAir: 0,
-        render: {
-            fillStyle: "#C0C0C0",
-            lineWidth: 5,
-            strokeStyle: "#4a485b"
-        }
-    });
+let pan2 = Bodies.fromVertices(100, 460, Vertices.fromPath('100 0 85 35 15 35 0 0'), {
+    render: {
+        fillStyle: "#666666",
+        strokeStyle: "black",
+        lineWidth: 1
+    },
+    collisionFilter: {
+        mask: greenCategory
+    }
+}, true);
+
+group = Body.nextGroup(true);
+
+let panHandle = Bodies.rectangle(35, 452, 70, 8, {
+    collisionFilter: {
+        mask: blueCategory
+    },
+    chamfer: 1,
+    render: {
+        fillStyle: "black",
+        strokeStyle: "black",
+        lineWidth: 1
+    }
 });
 
-pan.bodies[0].render.strokeStyle = "#4a485b";
+let compoundPan = Body.create({
+    parts: [panHandle, pan, pan2],
+    density: 1,
+    friction: .00001,
+    frictionStatic: .00001,
+    frictionAir: 0.015,
+    restitution: 1,
+});
 
-Composite.add(
-    pan,
-    Constraint.create({
-        bodyB: pan.bodies[0],
-        pointB: {
-            x: -length * 0.42,
-            y: 0
-        },
-        pointA: {
-            x: pan.bodies[0].position.x - length * 0.42,
-            y: pan.bodies[0].position.y
-        },
-        stiffness: 0,
-        length: 0,
-        render: {
-            strokeStyle: "#4a485b"
-        }
-    })
-);
-
-let constraint = Constraint.create({
+var constraint = Constraint.create({
     pointA: {
-        x: 50,
-        y: 700
+        x: 100,
+        y: 460
     },
-    bodyB: pan.bodies[0],
+    bodyB: compoundPan,
     pointB: {
-        x: 85,
-        y: 0
+        x: -50,
+        y: -5
     },
-    stiffness: 0.02,
-    damping: 1,
+    length: 0,
+    damping: .1,
     render: {
         visible: false,
         strokeStyle: "red"
     }
+
 });
+
 let constraint2 = Constraint.create({
     pointA: {
-        x: 350,
-        y: 480
+        x: 100,
+        y: 660
     },
-    bodyB: pan.bodies[0],
+    bodyB: compoundPan,
     pointB: {
-        x: 75,
-        y: 0
+        x: 45,
+        y: -10
     },
     stiffness: 0.01,
-    damping: 1,
+    damping: .9,
     render: {
         visible: false,
         strokeStyle: "red"
     }
-});
 
-let panHandle = Bodies.rectangle(70, 460, 90, 15, {
-    collisionFilter: {
-        group: group
-    },
-    chamfer: .1,
-    render: {
-        fillStyle: "#C0C0C0",
-        lineWidth: 5,
-        strokeStyle: "#4a485b"
-    }
 });
 let constraint3 = Constraint.create({
-    bodyA: pan.bodies[0],
     pointA: {
-        x: -90,
+        x: 250,
+        y: 450
+    },
+    bodyB: compoundPan,
+    pointB: {
+        x: 45,
         y: -10
     },
-    bodyB: panHandle,
-    pointB: {
-        x: 40,
-        y: 0
-    },
-    stiffness: 1,
-    angularStiffness: 1,
-    length: 0,
+    stiffness: 0.03,
+    damping: .9,
     render: {
         visible: false,
         strokeStyle: "red"
-    }
-});
-let constraint4 = Constraint.create({
-    bodyA: pan.bodies[0],
-    pointA: {
-        x: 0,
-        y: -10
     },
-    bodyB: panHandle,
-    pointB: {
-        x: 20,
-        y: 0
-    },
-    stiffness: 1,
-    render: {
-        visible: false,
-        strokeStyle: "red"
-    }
+    length: 0
 });
 
 
 group = Body.nextGroup(true);
 
-let bacon = Composites.stack(250, 50, 5, 1, 50, 50, function (x, y) {
-    return Bodies.rectangle(x - 40, y, 25, 15, {
+let bacon = Composites.stack(150, 50, 5, 1, 20, 20, function (x, y) {
+    return Bodies.rectangle(x - 20, y, 22, 12, {
         collisionFilter: {
             group: group
         },
@@ -222,7 +197,7 @@ let bacon = Composites.stack(250, 50, 5, 1, 50, 50, function (x, y) {
     });
 });
 
-Composites.chain(bacon, 0.3, 0, -0.3, 0, {
+Composites.chain(bacon, 0.20, 0, -0.20, 0, {
     stiffness: 1,
     length: 0,
     restitution: 0.5,
@@ -233,30 +208,44 @@ Composites.chain(bacon, 0.3, 0, -0.3, 0, {
         visible: false
     }
 });
-Events.on(engine, 'collisionActive', function (event) {
+Events.on(engine, "collisionActive", function (event) {
     let pairs = event.pairs;
     // console.log(pairs);
     const breakPoints = ["ground", "borderLeft", "borderRight"];
     pairs.forEach(pair => {
         breakPoints.forEach(area => {
-            if (pair.bodyA.label == area && pair.bodyB.label == "bacon" ||
-                pair.bodyA.label == "bacon" && pair.bodyB.label == area) {
-
+            if (
+                (pair.bodyA.label == area && pair.bodyB.label == "bacon") ||
+                (pair.bodyA.label == "bacon" && pair.bodyB.label == area)
+            ) {
                 // reset bacon
-                let moveBaconX = 250 - bacon.bodies[0].position.x;
+                let moveBaconX = 150 - bacon.bodies[0].position.x;
                 let moveBaconY = 50 - bacon.bodies[0].position.y;
 
                 Composite.translate(bacon, {
                     x: moveBaconX,
                     y: moveBaconY
                 });
+                for (i = 0; i < bacon.bodies.length; i++) {
+                    bacon.bodies[i].speed = 0;
+                    bacon.bodies[i].frictionAir = 1;
+                }
+                // make bacon be at stand still when reset
+                setTimeout(() => {
+                    for (i = 0; i < bacon.bodies.length; i++) {
+                        bacon.bodies[i].frictionAir = .0015;
+                    }
+                }, 100);
+
             }
         });
-        if (pair.bodyA.label == "level1" && pair.bodyB.label == "bacon" ||
-            pair.bodyA.label == "bacon" && pair.bodyB.label == "level1") {
-            if (bacon.bodies[0].speed <= .3) {
+        if (
+            (pair.bodyA.label == "level1" && pair.bodyB.label == "bacon") ||
+            (pair.bodyA.label == "bacon" && pair.bodyB.label == "level1")
+        ) {
+            if (bacon.bodies[0].speed <= 0.3) {
                 setTimeout(() => {
-                    if (bacon.bodies[0].speed <= .3) {
+                    if (bacon.bodies[0].speed <= 0.3) {
                         console.log("Level Completed");
                     }
                 }, 1000);
@@ -265,27 +254,20 @@ Events.on(engine, 'collisionActive', function (event) {
     });
 });
 
-
-// Body.setPosition(bacon, {
-//     x: 250,
-//     y: 50
-// });
-// change object colours to show those in an active collision (e.g. resting contact)
-
-
-
 World.add(engine.world, [
     boxA,
     ground,
     ceiling,
     borderLeft,
     borderRight,
-    pan,
+    // pan,
+    // pan2,
+    // panHandle,
+    compoundPan,
     constraint,
     constraint2,
-    panHandle,
     constraint3,
-    constraint4,
+    // constraint4,
     bacon
 ]);
 
