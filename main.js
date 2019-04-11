@@ -30,44 +30,12 @@ const render = Render.create({
         width: windowX,
         height: windowY,
         wireframes: false,
-        background: "#0f0f13"
+        background: "#f7d691"
     }
 });
 
-// let particleOptions = {
-//     density: 0.0000001,
-//     restitution: 1,
-//     friction: 1,
-//     frictionStatic: 1,
-//     render: {
-//         visible: true,
-//         fillStyle: "#F35e66"
-//     },
-//     stiffness: 0
-// };
-
-// let constraintOptions = {
-//     stiffness: 1,
-//     length: 20,
-//     render: {
-//         visible: true,
-//         fillStyle: "#F35e66"
-//     }
-// };
-// let softBody = Composites.softBody(
-//     250,
-//     200,
-//     1,
-//     5,
-//     0,
-//     0,
-//     false,
-//     10,
-//     particleOptions,
-//     constraintOptions
-// );
-
 let boxA = Bodies.rectangle(700, 500, 300, 300, {
+    label: "level1",
     isStatic: true,
     friction: .0001,
     render: {
@@ -273,26 +241,27 @@ Events.on(engine, 'collisionActive', function (event) {
         breakPoints.forEach(area => {
             if (pair.bodyA.label == area && pair.bodyB.label == "bacon" ||
                 pair.bodyA.label == "bacon" && pair.bodyB.label == area) {
-                // console.log(bacon);
-                // // for (let i = 0; i <= bacon.bodies.length; i++) {
-                // let y = 10;
-                // bacon.bodies[0].position = {
-                //     x: 250 + y,
-                //     y: 50
-                // }
-                // for (let i = 0; i <= bacon.bodies.length; i++) {
-                //     bacon.bodies[i].angularSpeed = 0;
-                //     bacon.bodies[i].angularVelocity = 0;
-                //     bacon.bodies[i].speed = 0;
-                // }
-                // // y += 10;
-                // console.log(bacon.bodies[i]);
 
-                // }
-                Composite.removeBody(bacon);
+                // reset bacon
+                let moveBaconX = 250 - bacon.bodies[0].position.x;
+                let moveBaconY = 50 - bacon.bodies[0].position.y;
 
+                Composite.translate(bacon, {
+                    x: moveBaconX,
+                    y: moveBaconY
+                });
             }
         });
+        if (pair.bodyA.label == "level1" && pair.bodyB.label == "bacon" ||
+            pair.bodyA.label == "bacon" && pair.bodyB.label == "level1") {
+            if (bacon.bodies[0].speed <= .3) {
+                setTimeout(() => {
+                    if (bacon.bodies[0].speed <= .3) {
+                        console.log("Level Completed");
+                    }
+                }, 1000);
+            }
+        }
     });
 });
 
