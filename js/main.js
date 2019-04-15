@@ -20,6 +20,11 @@ const engine = Engine.create();
 
 let windowX = window.innerWidth;
 let windowY = window.innerHeight;
+let centerInt = 0;
+
+if (windowX > 450) {
+    centerInt = windowX / 2 - 200
+}
 
 // create a renderer
 const render = Render.create({
@@ -37,7 +42,6 @@ var defaultCategory = 0x0001,
     redCategory = 0x0002,
     greenCategory = 0x0004,
     blueCategory = 0x0008;
-
 
 let ground = Bodies.rectangle(windowX / 2, windowY + 20, windowX, 40, {
     isStatic: true,
@@ -67,28 +71,37 @@ let ceiling = Bodies.rectangle(windowX / 2, -20, windowX, 40, {
     }
 });
 
-
-let pan = Bodies.fromVertices(60, 460, Vertices.fromPath('100 0 85 35 15 35 0 0'), {
-    render: {},
-    collisionFilter: {
-        mask: redCategory
-    }
-}, true);
-
-let pan2 = Bodies.fromVertices(60, 460, Vertices.fromPath('100 0 85 35 15 35 0 0'), {
-    render: {
-        fillStyle: "#666666",
-        strokeStyle: "black",
-        lineWidth: 1
+let pan = Bodies.fromVertices(
+    30 + centerInt,
+    410,
+    Vertices.fromPath("90 0 75 35 15 35 0 0"), {
+        render: {},
+        collisionFilter: {
+            mask: redCategory
+        }
     },
-    collisionFilter: {
-        mask: greenCategory
-    }
-}, true);
+    true
+);
+
+let pan2 = Bodies.fromVertices(
+    30 + centerInt,
+    410,
+    Vertices.fromPath("90 0 75 35 15 35 0 0"), {
+        render: {
+            fillStyle: "#666666",
+            strokeStyle: "black",
+            lineWidth: 1
+        },
+        collisionFilter: {
+            mask: greenCategory
+        }
+    },
+    true
+);
 
 group = Body.nextGroup(true);
 
-let panHandle = Bodies.rectangle(-5, 452, 70, 8, {
+let panHandle = Bodies.rectangle(-20 + centerInt, 402, 70, 8, {
     collisionFilter: {
         mask: blueCategory
     },
@@ -103,35 +116,34 @@ let panHandle = Bodies.rectangle(-5, 452, 70, 8, {
 let compoundPan = Body.create({
     parts: [panHandle, pan, pan2],
     density: 1,
-    friction: .00001,
-    frictionStatic: .00001,
+    friction: 0.00001,
+    frictionStatic: 0.00001,
     frictionAir: 0.015,
-    restitution: .9,
+    restitution: 0.9
 });
 
 var constraint = Constraint.create({
     pointA: {
-        x: 60,
-        y: 460
+        x: 35 + centerInt,
+        y: 410
     },
     bodyB: compoundPan,
     pointB: {
-        x: -50,
+        x: -40,
         y: -5
     },
     length: 0,
-    damping: .1,
+    damping: 0.1,
     render: {
         visible: false,
         strokeStyle: "red"
     }
-
 });
 
 let constraint2 = Constraint.create({
     pointA: {
-        x: 60,
-        y: 660
+        x: 40 + centerInt,
+        y: 610
     },
     bodyB: compoundPan,
     pointB: {
@@ -139,17 +151,16 @@ let constraint2 = Constraint.create({
         y: -10
     },
     stiffness: 0.01,
-    damping: .9,
+    damping: 0.9,
     render: {
         visible: false,
         strokeStyle: "red"
     }
-
 });
 let constraint3 = Constraint.create({
     pointA: {
-        x: 210,
-        y: 450
+        x: 170 + centerInt,
+        y: 403
     },
     bodyB: compoundPan,
     pointB: {
@@ -157,7 +168,7 @@ let constraint3 = Constraint.create({
         y: -10
     },
     stiffness: 0.03,
-    damping: .9,
+    damping: 0.9,
     render: {
         visible: false,
         strokeStyle: "red"
@@ -165,11 +176,10 @@ let constraint3 = Constraint.create({
     length: 0
 });
 
-
 group = Body.nextGroup(true);
 
-let bacon = Composites.stack(140, 50, 5, 1, 20, 20, function (x, y) {
-    return Bodies.rectangle(x - 20, y, 22, 12, {
+let bacon = Composites.stack(65 + centerInt, 50, 5, 1, 20, 20, function (x, y) {
+    return Bodies.rectangle(x - 20, y, 20, 9, {
         collisionFilter: {
             group: group
         },
@@ -188,7 +198,7 @@ let bacon = Composites.stack(140, 50, 5, 1, 20, 20, function (x, y) {
     });
 });
 
-Composites.chain(bacon, 0.20, 0, -0.20, 0, {
+Composites.chain(bacon, 0.2, 0, -0.2, 0, {
     stiffness: 1,
     length: 0,
     restitution: 0.5,
@@ -199,7 +209,6 @@ Composites.chain(bacon, 0.20, 0, -0.20, 0, {
         visible: false
     }
 });
-
 
 World.add(engine.world, [
     // boxA,

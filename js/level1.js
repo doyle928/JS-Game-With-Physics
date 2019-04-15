@@ -1,4 +1,4 @@
-let boxA = Bodies.rectangle(400, 500, 300, 300, {
+let boxA = Bodies.rectangle(windowX - 100 - centerInt, 400, 150, 150, {
     label: "level1",
     isStatic: true,
     friction: 0.0001,
@@ -7,5 +7,6 @@ let boxA = Bodies.rectangle(400, 500, 300, 300, {
         strokeStyle: "black",
         lineWidth: 1
     }
+
 });
 World.add(engine.world, boxA);
