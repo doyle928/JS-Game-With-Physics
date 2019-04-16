@@ -6,12 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="./style/main.css">
 
 </head>
 
 <body>
     <p class="instructions">Get the bacon on the box</p>
+    <div id="background"><canvas id="trianglify"></canvas>
+    </div>
+    <div id="game"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -19,10 +22,24 @@
 <script src="./js/matter.js" type="text/javascript"></script>
 <script src="./js/decomp.min.js"></script>
 <script src="./js/main.js"></script>
-<script src="./js/sandwich.js"></script>
 <script src="./js/level1.js"></script>
 <script src="./js/level2.js"></script>
-
+<script src="./js/level3.js"></script>
+<script src="./js/level4.js"></script>
+<script src="./js/level5.js"></script>
 <script src="./js/collision.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+
+<script>
+    var pattern = Trianglify({
+        height: windowY,
+        width: windowX,
+        cell_size: 120,
+        seed: 'sttmf', //h9m8r,pr6dl,sttmf,m4id2
+        x_colors: 'random'
+    });
+
+    pattern.canvas(document.getElementById('trianglify'));
+</script>
 
 </html>

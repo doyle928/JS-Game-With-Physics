@@ -28,13 +28,13 @@ if (windowX > 450) {
 
 // create a renderer
 const render = Render.create({
-    element: document.body,
+    element: document.getElementById("game"),
     engine: engine,
     options: {
         width: windowX,
         height: windowY,
         wireframes: false,
-        background: "#f7d691"
+        background: "#transparent"
     }
 });
 

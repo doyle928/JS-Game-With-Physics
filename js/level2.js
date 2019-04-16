@@ -1,6 +1,6 @@
 let sand1;
 
-$.get('././sandwich.svg').done(function (data) {
+$.get('././style/images/sandwich.svg').done(function (data) {
     var vertexSets = [];
     $(data).find('path').each(function (i, path) {
         vertexSets.push(Svg.pathToVertices(path, 30));
@@ -20,7 +20,8 @@ $.get('././sandwich.svg').done(function (data) {
     });
     console.log(sand1);
     Body.scale(sand1, .45, .45);
-    sand1.parts[18].render.sprite.texture = "././sandwich.png";
+    sand1.parts[18].render.sprite.texture = "././style/images/sandwich.png";
+
 
 
 });
